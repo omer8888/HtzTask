@@ -10,13 +10,13 @@ I'm excited to see what you can bring to our team. This technical assessment is 
 ### Requirements
 - PHP 7.4 or higher
 - SQLite3 extension enabled
-- Web server (Apache/Nginx) or PHP's built-in server
+- PHP's built-in server
 - Modern web browser with JavaScript enabled
 
 ### Getting Started
 1. Clone or download this repository to your local machine
 2. Ensure your PHP environment has SQLite3 extension enabled
-3. Start your web server or use PHP's built-in server:
+3. Start your web use PHP's built-in server:
    
    # Navigate to the project directory
    cd path/to/project
@@ -25,10 +25,10 @@ I'm excited to see what you can bring to our team. This technical assessment is 
    php -S localhost:8000
  
 4. Open your browser and navigate to:
-   - If using built-in server: `http://localhost:8000`
-   - If using Apache/Nginx: Your configured local URL
+   using built-in server: `http://localhost:8000`
 
-### Project Structure
+
+###Suggested Project Structure (this is only a suggestion you are allowed to change the stracture)
 
 project/
 ├── index.php              # Main landing page
@@ -77,7 +77,6 @@ b. `Category` Class:
   - `id`: Category ID
   - `name`: Category name
   - `description`: Category description
-  - `parent_id`: Parent category ID (for hierarchical categories)
 
 #### 3. Product Carousels (Server-side Rendering)
 - Create 3 distinct category-based product carousels
@@ -150,7 +149,6 @@ CREATE TABLE categories (
     name TEXT NOT NULL,
     description TEXT,
     parent_id INTEGER,
-    FOREIGN KEY (parent_id) REFERENCES categories(id)
 );
 
 -- Items Table
