@@ -140,7 +140,7 @@ After you've implemented the HtzoneApi class:
    Or navigate to `http://localhost:8000/init_database.php`
 2. Check the JSON response for successful initialization
 
-### Database Schema
+### Suggested Database Schema(this is only a suggestion you are allowed to change the stracture)
 The SQLite database is already created with the following schema:
 
 -- Categories Table
