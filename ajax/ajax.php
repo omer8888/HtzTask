@@ -1,5 +1,8 @@
 <?php
-require_once '../class/Item.php';
+require_once '../class/Item/ItemService.php';
+require_once '../class/Item/ItemEntity.php';
+require_once '../class/Category/CategoryService.php';
+require_once '../class/Database/Database.php';
 
 header('Content-Type: application/json');
 
@@ -16,25 +19,24 @@ if (!isset($_POST['act'])) {
 }
 
 
-
 switch ($_POST['act']) {
     case 'getItems':
         $page = isset($_POST['page']) ? (int)$_POST['page'] : 1;
         $limit = isset($_POST['limit']) ? (int)$_POST['limit'] : 10;
         $filters = [
-            'category' => $_POST['category'],
-            'price_min' => $_POST['price_min'],
-            'price_max' => $_POST['price_max'],
+            'category_id' => $_POST['category'], // Fix key
+            'min_price' => $_POST['price_min'],  // Fix key
+            'max_price' => $_POST['price_max'],
             'brand' => $_POST['brand']
         ];
-        
+
         $sort = [
             'field' => $_POST['sort_field'],
             'direction' => $_POST['sort_direction']
         ];
 
-        //implement the getItems method in Item class
-        $data = $item->getItems($page, $limit, $filters, $sort);
+        $itemService = new ItemService();
+        $data = $itemService->getItems($filters, $sort,$page);
 
         $response['status'] = 'success';
         $response['data'] = $data;
@@ -42,7 +44,8 @@ switch ($_POST['act']) {
 
     case 'getCategories':
         //implement the getCategories method in Item class
-        $data = $item->getCategories();
+        $categoryService = new CategoryService();
+        $data = $categoryService->getCategories();
 
         $response['status'] = 'success';
         $response['data'] = $data;

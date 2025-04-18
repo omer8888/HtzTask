@@ -1,0 +1,22 @@
+{
+  "name": "vendor_name/htzone_php_test",
+  "description": "description",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "omernaim",
+      "email": "email@example.com"
+    }
+  ],
+  "require": {
+    "ext-sqlite3": "*",
+    "ext-curl": "*",
+    "ext-json": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "App\\": "src/"
+    }
+  }
+}

@@ -15,7 +15,6 @@ try {
     $api = new HtzoneApi();
 
     try {
-        $api->initDatabase();
         outputMessage('success', 'Database initialized successfully');
     } catch (Exception $e) {
         throw new Exception('Database initialization failed: ' . $e->getMessage());

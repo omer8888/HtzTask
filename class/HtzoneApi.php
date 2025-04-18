@@ -1,54 +1,127 @@
 <?php
 
-class HtzoneApi {
-    private $db;
+
+/**
+ * Implement the HtzoneApi class to fetch item and category data from our API
+ * Store the fetched data in the local SQLite database
+ * Refer to api_doc.txt for detailed API documentation
+ * Ensure proper error handling and data validation
+ */
+require_once __DIR__ . '/../class/Item/ItemService.php';
+require_once __DIR__ . '/../class/Category/CategoryService.php';
+require_once __DIR__ . '/../class/Item/ItemEntity.php';
+require_once __DIR__ . '/../class/Category/CategoryService.php';
+require_once __DIR__ . '/../class/Database/Database.php';
+
+class HtzoneApi
+{
+    /**
+     * @var string
+     */
     private $base_url = 'https://storeapi.htzone.co.il/ext/O2zfcVu2t8gOB6nzSfFBu4joDYPH7s';
 
-    public function __construct() {
-        try {
-            $this->db = new SQLite3(__DIR__ . '/../database/database.sqlite');
-            $this->db->exec('PRAGMA foreign_keys = ON');
-        } catch (Exception $e) {
-            throw new Exception("Database connection failed: " . $e->getMessage());
+    /**
+     * @var CategoryService
+     */
+    private $categoryService;
+
+    /**
+     * @var ItemService
+     */
+    private $itemService;
+
+
+    /**
+     * @param $url
+     * @return array|mixed|null
+     */
+    private function makeApiRequest($url)
+    {
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 10);
+        $response = curl_exec($ch);
+        if (curl_errno($ch)) {
+            curl_close($ch);
+            return null;
         }
-        $this->initDatabase();
+
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        if ($httpCode !== 200) return null;
+
+        $decoded = json_decode($response, true);
+        if (!isset($decoded['success']) || !$decoded['success']) return null;
+
+        return $decoded['data'] ?? [];
     }
 
-    public function initDatabase() {
-        // Create categories table
-        $this->db->exec('
-            CREATE TABLE IF NOT EXISTS categories (
-                id INTEGER PRIMARY KEY,
-                name TEXT NOT NULL,
-                description TEXT,
-                parent_id INTEGER,
-                FOREIGN KEY (parent_id) REFERENCES categories(id)
-            )
-        ');
+    /**
+     * @return void
+     */
+    public function fetchAndStoreCategories()
+    {
+        $url = $this->base_url . '/categories';
+        $categories = $this->makeApiRequest($url);
 
-        // Create items table
-        $this->db->exec('
-            CREATE TABLE IF NOT EXISTS items (
-                id INTEGER PRIMARY KEY,
-                name TEXT NOT NULL,
-                description TEXT,
-                price REAL NOT NULL,
-                brand TEXT,
-                category_id INTEGER,
-                image_url TEXT,
-                stock INTEGER,
-                FOREIGN KEY (category_id) REFERENCES categories(id)
-            )
-        ');
+        if (!$categories) return;
+
+        foreach ($categories as $cat) {
+            if (!isset($cat['category_id']) || !isset($cat['title'])) continue;
+
+            $category = new CategoryModel();
+            $category->setId((int)$cat['category_id']);
+            $category->setName($cat['title']);
+            $category->setDescription($cat['parent_title'] ?? null);
+
+            $this->getCategoryService()->addCategory($category);
+        }
     }
 
-    public function fetchAndStoreCategories() {
-        // Fetch categories from API using CURL and store to local db
-       
+    /**
+     * @return void
+     */
+    public function fetchAndStoreItems()
+    {
+        $categories = $this->getCategoryService()->getCategories();
+        foreach ($categories as $category) {
+            $url = $this->base_url . '/items/' . $category->getId();
+            $items = $this->makeApiRequest($url);
+
+            if (!$items) continue;
+
+            foreach ($items as $item) {
+                if (!isset($item['id'], $item['title'], $item['price'])) continue;
+
+                $itemModel = (new ItemModel())
+                    ->setId((int)$item['id'])
+                    ->setName($item['title'])
+                    ->setDescription(strip_tags($item['brief'] ?? ''))
+                    ->setPrice((float)$item['price'])
+                    ->setBrand($item['brand_id'] ?? null)
+                    ->setCategory((int)($item['category_id'] ?? $category->getId()))
+                    ->setImage($item['image'] ?? null)
+                    ->setAvailableStock((int)($item['stock'] ?? 0));
+
+                $this->getItemService()->addItem($itemModel);
+            }
+        }
     }
 
+    /**
+     * @return CategoryService
+     */
+    protected function getCategoryService()
+    {
+        return $this->categoryService ?? $this->categoryService = new CategoryService();
+    }
 
-    public function fetchAndStoreItems() {
-          // Fetch items from API using CURL and store to local db
+    /**
+     * @return ItemService
+     */
+    protected function getItemService()
+    {
+        return $this->itemService ?? $this->itemService = new ItemService();
     }
 }
