@@ -5,12 +5,10 @@ require_once 'ItemConverter.php';
 
 class ItemService
 {
+    /**
+     * @var ItemDao
+     */
     private $dao;
-
-    public function __construct()
-    {
-        $this->dao = new ItemDao();
-    }
 
     /**
      * @param array $filters
@@ -20,11 +18,10 @@ class ItemService
      */
     public function getItems(array $filters = [], $sortBy = 'name', $order = 'ASC')
     {
-        $entities = $this->dao->fetch($filters, $sortBy, $order);
+        $entities = $this->getItemDao()->fetch($filters, $sortBy, $order);
         $models = [];
 
         foreach ($entities as $entity) {
-            //$models[] = ItemConverter::entityToModel($entity);
             $models[] = [
                 'id' => $entity->getId(),
                 'name' => $entity->getName(),
@@ -49,5 +46,13 @@ class ItemService
     {
         $entity = ItemConverter::modelToEntity($model);
         $this->dao->insert($entity);
+    }
+
+    /**
+     * @return ItemDao
+     */
+    protected function getItemDao()
+    {
+        return $this->dao ?? $this->dao = new ItemDao();
     }
 }

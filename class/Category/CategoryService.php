@@ -3,18 +3,20 @@
 require_once 'CategoryDao.php';
 require_once 'CategoryConverter.php';
 
-class CategoryService {
-    private $dao;
+class CategoryService
+{
+    /**
+     * @var CategoryDao
+     */
+    private $categoryDao;
 
-    public function __construct() {
-        $this->dao = new CategoryDao();
-    }
 
     /**
      * @return array
      */
-    public function getCategories() {
-        $entities = $this->dao->fetchAll();
+    public function getCategories()
+    {
+        $entities = $this->getCategoryDao()->fetchAll();
         $models = [];
 
         foreach ($entities as $entity) {
@@ -30,37 +32,22 @@ class CategoryService {
         ];
     }
 
-    public function addCategory(CategoryModel $model): void {
+    /**
+     * @param CategoryModel $model
+     * @return void
+     */
+    public function addCategory($model)
+    {
         $entity = CategoryConverter::modelToEntity($model);
-        $this->dao->insert($entity);
+        $this->getCategoryDao()->insert($entity);
     }
 
-//    public function getCategoryById($id): ?CategoryModel {
-//        $entity = $this->dao->fetchById($id);
-//        return $entity ? CategoryConverter::entityToModel($entity) : null;
-//    }
-//
-//    public function getCategoryItems($category_id): array {
-//        $items = $this->dao->fetchCategoryItems($category_id);
-//        $models = [];
-//
-//        foreach ($items as $item) {
-//            $models[] = ItemConverter::entityToModel($item);
-//        }
-//
-//        return $models;
-//    }
-//
-//    public function getTopCategories($limit): array {
-//        $entities = $this->dao->fetchTopCategories($limit);
-//        $models = [];
-//
-//        foreach ($entities as $entity) {
-//            $models[] = CategoryConverter::entityToModel($entity);
-//        }
-//
-//        return $models;
-//    }
-//
+    /**
+     * @return CategoryDao
+     */
+    protected function getCategoryDao()
+    {
+        return $this->categoryDao ?? $this->categoryDao = new CategoryDao();
+    }
 
 }

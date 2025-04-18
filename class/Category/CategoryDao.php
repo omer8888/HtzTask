@@ -4,11 +4,18 @@ require_once 'CategoryEntity.php';
 
 class CategoryDao
 {
-    private $db;
+    /**
+     * @var
+     */
+    private $dataBaseInstance;
 
-    public function __construct()
+
+    /**
+     * @return SQLite3
+     */
+    protected function getDatabaseInstance()
     {
-        $this->db = Database::getInstance();
+        return $this->dataBaseInstance ?? $this->dataBaseInstance = Database::getInstance();
     }
 
     /**
@@ -17,7 +24,7 @@ class CategoryDao
      */
     public function insert(CategoryEntity $category): void
     {
-        $stmt = $this->db->prepare('
+        $stmt = $this->getDatabaseInstance()->prepare('
             INSERT OR REPLACE INTO categories (id, name, description)
             VALUES (:id, :name, :description)
         ');
@@ -34,7 +41,7 @@ class CategoryDao
     public function fetchAll(): array
     {
         $sql = 'SELECT * FROM categories';
-        $result = $this->db->query($sql);
+        $result = $this->getDatabaseInstance()->query($sql);
         $categories = [];
 
         while ($row = $result->fetchArray(SQLITE3_ASSOC)) {

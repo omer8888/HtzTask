@@ -7,11 +7,15 @@ class ItemDao
     /**
      * @var SQLite3
      */
-    private $db;
+    private $dataBaseInstance;
 
-    public function __construct()
+    /**
+     * @return SQLite3
+     * @throws Exception
+     */
+    protected function getDatabaseInstance()
     {
-        $this->db = Database::getInstance();
+        return $this->dataBaseInstance ?? $this->dataBaseInstance = Database::getInstance();
     }
 
     /**
@@ -20,7 +24,7 @@ class ItemDao
      */
     public function insert(ItemEntity $item)
     {
-        $stmt = $this->db->prepare('
+        $stmt = $this->getDatabaseInstance()->prepare('
             INSERT OR REPLACE INTO items (id, name, description, price, brand, category_id, image_url, stock)
             VALUES (:id, :name, :description, :price, :brand, :category_id, :image_url, :stock)
         ');
@@ -79,7 +83,7 @@ class ItemDao
         }
 
 
-        $stmt = $this->db->prepare($sql);
+        $stmt = $this->getDatabaseInstance()->prepare($sql);
         foreach ($params as $k => $v) {
             $stmt->bindValue($k, $v);
         }
