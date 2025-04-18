@@ -17,6 +17,7 @@ foreach ($carouselCategories as $categoryId => $title) {
     $items = $itemService->getItems($filters, $sort, 1)['items'] ?? [];
     $carouselItems[$categoryId] = array_slice($items, 0, 5);
 }
+
 ?>
 
 <!DOCTYPE html>
