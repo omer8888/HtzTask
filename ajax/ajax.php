@@ -51,6 +51,31 @@ switch ($_POST['act']) {
         $response['data'] = $data;
         break;
 
+    case 'getCarouselItems':
+        $carouselCategories = [
+            1043 => 'Tablets',
+            1042 => 'Laptops',
+            1554 => 'Smartphones'
+        ];
+
+        $itemService = new ItemService();
+        $carouselItems = [];
+
+        foreach ($carouselCategories as $categoryId => $title) {
+            $filters = ['category_id' => $categoryId];
+            $sort = ['field' => 'name', 'direction' => 'ASC'];
+            $items = $itemService->getItems($filters, $sort, 1)['items'] ?? [];
+            $carouselItems[] = [
+                'category_id' => $categoryId,
+                'title' => $title,
+                'items' => array_slice($items, 0, 5)
+            ];
+        }
+
+        $response['status'] = 'success';
+        $response['data'] = $carouselItems;
+        break;
+
     default:
         $response['message'] = 'Invalid action';
 }

@@ -146,4 +146,56 @@ function loadCategories() {
     });
 }
 
+function loadCarouselItems() {
+    $.ajax({
+        url: 'ajax/ajax.php',
+        method: 'POST',
+        data: { act: 'getCarouselItems' },
+        dataType: 'json',
+        success: function(response) {
+            if (response.status === 'success') {
+                const $carouselSection = $('#carousel-section');
+                $carouselSection.empty();
+
+                response.data.forEach(category => {
+                    const categoryId = category.category_id;
+                    const title = category.title;
+                    const items = category.items;
+
+                    const $wrapper = $(`
+                        <section class="carousel-wrapper">
+                            <h2>${title}</h2>
+                            <div class="carousel-container">
+                                <button class="carousel-button left" onclick="scrollCarousel(${categoryId}, -1)">←</button>
+                                <div class="carousel-items" id="carousel-${categoryId}"></div>
+                                <button class="carousel-button right" onclick="scrollCarousel(${categoryId}, 1)">→</button>
+                            </div>
+                        </section>
+                    `);
+
+                    const $carouselItems = $wrapper.find(`#carousel-${categoryId}`);
+                    items.forEach(item => {
+                        const $item = $(`
+                            <div class="product-item">
+                                <img class="product-image" src="${item.image_url}" alt="${item.name}">
+                                <h3>${item.name}</h3>
+                                <p class="brand">${item.brand}</p>
+                                <p class="price">$${parseFloat(item.price).toFixed(2)}</p>
+                            </div>
+                        `);
+                        $carouselItems.append($item);
+                    });
+
+                    $carouselSection.append($wrapper);
+                });
+            } else {
+                console.error('Failed to load carousel items:', response.message);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error('AJAX error loading carousels:', textStatus, errorThrown);
+        }
+    });
+}
+loadCarouselItems();
 loadCategories();
