@@ -1,12 +1,10 @@
-
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>HTZone PHP Test</title>
-    <link rel="stylesheet" href="static/css/styles.css">
+    <link rel="stylesheet" href="static/css/styles.css"/>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
@@ -16,22 +14,33 @@
     </header>
 
     <main>
+        <!-- Carousel Section -->
         <section id="carousel-section"></section>
 
         <!-- Filters Section -->
         <section class="filters-wrapper">
-            <select id="category-filter">
-                <option value="">All Categories</option>
-            </select>
-            <select id="sort-select">
-                <option value="name-ASC">Name (A-Z)</option>
-                <option value="name-DESC">Name (Z-A)</option>
-                <option value="price-ASC">Price (Low to High)</option>
-                <option value="price-DESC">Price (High to Low)</option>
-            </select>
-            <form id="price-filter">
-                <input type="number" id="price-min" placeholder="Min Price">
-                <input type="number" id="price-max" placeholder="Max Price">
+            <div class="filter-group">
+                <label for="category-filter">Category:</label>
+                <select id="category-filter">
+                    <option value="">All Categories</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label for="sort-select">Sort By:</label>
+                <select id="sort-select">
+                    <option value="name-ASC">Name (A-Z)</option>
+                    <option value="name-DESC">Name (Z-A)</option>
+                    <option value="price-ASC">Price (Low to High)</option>
+                    <option value="price-DESC">Price (High to Low)</option>
+                </select>
+            </div>
+
+            <form id="price-filter" class="price-filter">
+                <label>Price:</label>
+                <input type="number" id="price-min" placeholder="Min">
+                <span>-</span>
+                <input type="number" id="price-max" placeholder="Max">
                 <button type="submit">Apply</button>
             </form>
         </section>
@@ -39,31 +48,7 @@
         <!-- Product List Section -->
         <section class="products-wrapper">
             <div id="product-list" class="grid-layout"></div>
-            <div id="loading-indicator" style="display: none;">Loading...</div>
-        </section>
-
-        <!-- Filters Section -->
-        <section class="filters-wrapper">
-            <select id="category-filter">
-                <option value="">All Categories</option>
-            </select>
-            <select id="sort-select">
-                <option value="name-ASC">Name (A-Z)</option>
-                <option value="name-DESC">Name (Z-A)</option>
-                <option value="price-ASC">Price (Low to High)</option>
-                <option value="price-DESC">Price (High to Low)</option>
-            </select>
-            <form id="price-filter">
-                <input type="number" id="price-min" placeholder="Min Price">
-                <input type="number" id="price-max" placeholder="Max Price">
-                <button type="submit">Apply</button>
-            </form>
-        </section>
-
-        <!-- Product List Section -->
-        <section class="products-wrapper">
-            <div id="product-list" class="grid-layout"></div>
-            <div id="loading-indicator" style="display: none;">Loading...</div>
+            <div id="loading-indicator">Loading...</div>
         </section>
     </main>
 </div>
@@ -79,7 +64,6 @@
         }
     }
 </script>
-
 <script src="static/js/scripts.js"></script>
 </body>
 </html>
