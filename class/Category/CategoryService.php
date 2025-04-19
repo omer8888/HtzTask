@@ -33,6 +33,34 @@ class CategoryService
     }
 
     /**
+     * Validates a CategoryModel instance
+     *
+     * @param CategoryModel $model
+     * @return bool
+     */
+    public function validateCategoryModel($model)
+    {
+        if (!is_int($model->getId()) || $model->getId() <= 0) {
+            error_log('[CategoryService] Invalid ID: ' . print_r($model->getId(), true));
+            return false;
+        }
+
+        if (!is_string($model->getName()) || trim($model->getName()) === '') {
+            error_log('[CategoryService] Invalid name: ' . print_r($model->getName(), true));
+            return false;
+        }
+
+        // Description can be null or string, so we only check if it's not a string when set
+        if (!is_null($model->getDescription()) && !is_string($model->getDescription())) {
+            error_log('[CategoryService] Invalid description: ' . print_r($model->getDescription(), true));
+            return false;
+        }
+
+        return true;
+    }
+
+
+    /**
      * @return CategoryModel[]
      */
     public function getCategories()

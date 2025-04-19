@@ -102,17 +102,23 @@ class HtzoneApi
         $url = $this->base_url . '/categories';
         $categories = $this->makeApiRequest($url);
 
-        //add data validation
-
         if (!$categories) return;
 
         foreach ($categories as $cat) {
-            if (!isset($cat['category_id']) || !isset($cat['title'])) continue;
+            if (!isset($cat['category_id']) || !isset($cat['title'])) {
+                error_log('[HtzoneApi] Invalid category skipped: ' . print_r($cat, true));
+                continue;
+            }
 
             $category = new CategoryModel();
             $category->setId((int)$cat['category_id']);
             $category->setName($cat['title']);
             $category->setDescription($cat['parent_title'] ?? null);
+
+            if (!$this->getCategoryService()->validateCategoryModel($category)) {
+                error_log('[HtzoneApi] Validation failed for category: ' . print_r($cat, true));
+                continue;
+            }
 
             $this->getCategoryService()->addCategory($category);
         }
@@ -132,10 +138,6 @@ class HtzoneApi
 
             foreach ($items as $item) {
 
-                //add data validation
-                if (!isset($item['id'], $item['title'], $item['price']))
-                    continue;
-
                 $itemModel = (new ItemModel())
                     ->setId((int)$item['id'])
                     ->setName($item['title'])
@@ -146,10 +148,17 @@ class HtzoneApi
                     ->setImage($item['image'] ?? null)
                     ->setAvailableStock((int)($item['stock'] ?? 0));
 
+                // validate before adding
+                if (!$this->getItemService()->validateItemModel($itemModel)) {
+                    error_log('[HtzoneApi] Invalid item skipped: ' . print_r($item, true));
+                    continue;
+                }
+
                 $this->getItemService()->addItem($itemModel);
             }
         }
     }
+
 
     /**
      * @return CategoryService
