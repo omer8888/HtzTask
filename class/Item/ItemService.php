@@ -10,10 +10,6 @@ class ItemService
      */
     private $dao;
 
-    /**
-     * @var HtzoneApi
-     */
-    private $htzoneApi;
 
     /**
      * @param array $filters
@@ -80,11 +76,4 @@ class ItemService
         return $this->dao ?? $this->dao = new ItemDao();
     }
 
-    /**
-     * @return HtzoneApi
-     */
-    private function getHtzoneApi()
-    {
-        return $this->htzoneApi ?? $this->htzoneApi = new HtzoneApi();
-    }
 }

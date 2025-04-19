@@ -3,7 +3,9 @@
 
 require_once __DIR__ . '/../class/HtzoneApi.php';
 require_once __DIR__ . '/../class/Category/CategoryService.php';
-
+//this class is for fetching updated data to the db from api for the first time
+// and its not part of the task
+// if it was required to update db i would do it one time and use cache
 try {
     $api = new HtzoneApi();
     $api->fetchAndStoreCategories();

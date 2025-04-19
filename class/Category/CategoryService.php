@@ -10,11 +10,6 @@ class CategoryService
      */
     private $categoryDao;
 
-    /**
-     * @var HtzoneApi
-     */
-    private $htzoneApi;
-
 
     /**
      * @return array
@@ -68,14 +63,6 @@ class CategoryService
     protected function getCategoryDao()
     {
         return $this->categoryDao ?? $this->categoryDao = new CategoryDao();
-    }
-
-    /**
-     * @return HtzoneApi
-     */
-    private function getHtzoneApi()
-    {
-        return $this->htzoneApi ?? $this->htzoneApi = new HtzoneApi();
     }
 
 }

@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Singleton pattern
+ */
 class Database
 {
     private static ?SQLite3 $instance = null;

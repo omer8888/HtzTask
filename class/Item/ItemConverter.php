@@ -3,6 +3,9 @@
 require_once 'ItemEntity.php';
 require_once 'ItemModel.php';
 
+/**
+ * Converting between entity to model and the other way
+ */
 class ItemConverter
 {
     /**

@@ -44,7 +44,6 @@ switch ($_POST['act']) {
         break;
 
     case 'getCategories':
-        //implement the getCategories method in Item class
         $categoryService = new CategoryService();
         $data = $categoryService->getCategoriesForDisplay();
 

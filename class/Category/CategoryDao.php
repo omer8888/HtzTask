@@ -2,6 +2,7 @@
 
 require_once 'CategoryEntity.php';
 
+
 class CategoryDao
 {
     /**

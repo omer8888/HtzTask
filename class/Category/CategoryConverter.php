@@ -3,6 +3,9 @@
 require_once 'CategoryEntity.php';
 require_once 'CategoryModel.php';
 
+/**
+ * Converting between entity to model and the other way
+ */
 class CategoryConverter
 {
     /**

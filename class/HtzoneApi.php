@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  * Implement the HtzoneApi class to fetch item and category data from our API
  * Store the fetched data in the local SQLite database
@@ -30,6 +29,12 @@ class HtzoneApi
      */
     private $itemService;
 
+    private const HTTP_OK = 200;
+    private const HTTP_BAD_REQUEST = 400;
+    private const HTTP_UNAUTHORIZED = 401;
+    private const HTTP_NOT_FOUND = 404;
+    private const HTTP_TOO_MANY_REQUESTS = 429;
+    private const HTTP_SERVER_ERROR = 500;
 
     /**
      * @param $url
@@ -49,12 +54,44 @@ class HtzoneApi
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
 
-        if ($httpCode !== 200) return null;
+        if ($httpCode !== self::HTTP_OK) {
+            $this->handleHttpError($httpCode, $url);
+            return null;
+        }
 
         $decoded = json_decode($response, true);
         if (!isset($decoded['success']) || !$decoded['success']) return null;
 
         return $decoded['data'] ?? [];
+    }
+
+    /**
+     * @param int $httpCode
+     * @param string $url
+     * @return void
+     */
+    private function handleHttpError($httpCode, $url)
+    {
+        switch ($httpCode) {
+            case self::HTTP_BAD_REQUEST:
+                error_log("400 Bad Request: $url");
+                break;
+            case self::HTTP_UNAUTHORIZED:
+                error_log("401 Unauthorized: Invalid API key - $url");
+                break;
+            case self::HTTP_NOT_FOUND:
+                error_log("404 Not Found: $url");
+                break;
+            case self::HTTP_TOO_MANY_REQUESTS:
+                error_log("429 Too Many Requests: Rate limit exceeded - $url");
+                break;
+            case self::HTTP_SERVER_ERROR:
+                error_log("500 Internal Server Error: $url");
+                break;
+            default:
+                error_log("HTTP Error $httpCode: $url");
+                break;
+        }
     }
 
     /**
@@ -64,6 +101,8 @@ class HtzoneApi
     {
         $url = $this->base_url . '/categories';
         $categories = $this->makeApiRequest($url);
+
+        //add data validation
 
         if (!$categories) return;
 
@@ -92,7 +131,10 @@ class HtzoneApi
             if (!$items) continue;
 
             foreach ($items as $item) {
-                if (!isset($item['id'], $item['title'], $item['price'])) continue;
+
+                //add data validation
+                if (!isset($item['id'], $item['title'], $item['price']))
+                    continue;
 
                 $itemModel = (new ItemModel())
                     ->setId((int)$item['id'])
