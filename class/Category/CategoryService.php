@@ -10,11 +10,16 @@ class CategoryService
      */
     private $categoryDao;
 
+    /**
+     * @var HtzoneApi
+     */
+    private $htzoneApi;
+
 
     /**
      * @return array
      */
-    public function getCategories()
+    public function getCategoriesForDisplay()
     {
         $entities = $this->getCategoryDao()->fetchAll();
         $models = [];
@@ -33,6 +38,21 @@ class CategoryService
     }
 
     /**
+     * @return CategoryModel[]
+     */
+    public function getCategories()
+    {
+        $entities = $this->getCategoryDao()->fetchAll();
+        $models = [];
+
+        foreach ($entities as $entity) {
+            $models[] = CategoryConverter::entityToModel($entity);
+        }
+
+        return $models;
+    }
+
+    /**
      * @param CategoryModel $model
      * @return void
      */
@@ -48,6 +68,14 @@ class CategoryService
     protected function getCategoryDao()
     {
         return $this->categoryDao ?? $this->categoryDao = new CategoryDao();
+    }
+
+    /**
+     * @return HtzoneApi
+     */
+    private function getHtzoneApi()
+    {
+        return $this->htzoneApi ?? $this->htzoneApi = new HtzoneApi();
     }
 
 }

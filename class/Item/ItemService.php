@@ -11,12 +11,17 @@ class ItemService
     private $dao;
 
     /**
+     * @var HtzoneApi
+     */
+    private $htzoneApi;
+
+    /**
      * @param array $filters
      * @param $sortBy
      * @param $order
      * @return array
      */
-    public function getItems(array $filters = [], $sortBy = 'name', $order = 'ASC')
+    public function getItemsForDisplay(array $filters = [], $sortBy = 'name', $order = 'ASC')
     {
         $entities = $this->getItemDao()->fetch($filters, $sortBy, $order);
         $models = [];
@@ -32,11 +37,30 @@ class ItemService
             ];
         }
 
-        //return $models;
         return [
             'items' => $models
         ];
     }
+
+    /**
+     * @param array $filters
+     * @param $sortBy
+     * @param $order
+     * @return array
+     */
+    public function getItems(array $filters = [], $sortBy = 'name', $order = 'ASC')
+    {
+        $entities = $this->getItemDao()->fetch($filters, $sortBy, $order);
+        $models = [];
+
+        foreach ($entities as $entity) {
+            $models[] = ItemConverter::entityToModel($entity);
+        }
+
+        return $models;
+    }
+
+
 
     /**
      * @param ItemModel $model
@@ -45,7 +69,7 @@ class ItemService
     public function addItem(ItemModel $model)
     {
         $entity = ItemConverter::modelToEntity($model);
-        $this->dao->insert($entity);
+        $this->getItemDao()->insert($entity);
     }
 
     /**
@@ -54,5 +78,13 @@ class ItemService
     protected function getItemDao()
     {
         return $this->dao ?? $this->dao = new ItemDao();
+    }
+
+    /**
+     * @return HtzoneApi
+     */
+    private function getHtzoneApi()
+    {
+        return $this->htzoneApi ?? $this->htzoneApi = new HtzoneApi();
     }
 }

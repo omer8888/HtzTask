@@ -94,7 +94,6 @@ class ItemDao
         while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
             $entity = new ItemEntity();
 
-            // Use setters to set the values for the entity
             $entity->setId($row['id']);
             $entity->setName($row['name']);
             $entity->setDescription($row['description']);

@@ -3,6 +3,7 @@ require_once '../class/Item/ItemService.php';
 require_once '../class/Item/ItemEntity.php';
 require_once '../class/Category/CategoryService.php';
 require_once '../class/Database/Database.php';
+require_once '../class/HtzoneApi.php';
 
 header('Content-Type: application/json');
 
@@ -36,7 +37,7 @@ switch ($_POST['act']) {
         ];
 
         $itemService = new ItemService();
-        $data = $itemService->getItems($filters, $sort,$page);
+        $data = $itemService->getItemsForDisplay($filters, $sort,$page);
 
         $response['status'] = 'success';
         $response['data'] = $data;
@@ -45,7 +46,7 @@ switch ($_POST['act']) {
     case 'getCategories':
         //implement the getCategories method in Item class
         $categoryService = new CategoryService();
-        $data = $categoryService->getCategories();
+        $data = $categoryService->getCategoriesForDisplay();
 
         $response['status'] = 'success';
         $response['data'] = $data;
@@ -64,7 +65,7 @@ switch ($_POST['act']) {
         foreach ($carouselCategories as $categoryId => $title) {
             $filters = ['category_id' => $categoryId];
             $sort = ['field' => 'name', 'direction' => 'ASC'];
-            $items = $itemService->getItems($filters, $sort, 1)['items'] ?? [];
+            $items = $itemService->getItemsForDisplay($filters, $sort, 1)['items'] ?? [];
             $carouselItems[] = [
                 'category_id' => $categoryId,
                 'title' => $title,
