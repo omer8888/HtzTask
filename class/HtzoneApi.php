@@ -12,6 +12,17 @@ require_once __DIR__ . '/../class/Item/ItemEntity.php';
 require_once __DIR__ . '/../class/Category/CategoryService.php';
 require_once __DIR__ . '/../class/Database/Database.php';
 
+/**
+ * This class is responsible for fetching data from the external API
+ * and storing it in the local database.
+ *
+ * In a real-world scenario, this would typically be handled by a scheduled
+ * background daemon (e.g., a cron job) that runs at regular intervals
+ * to synchronize and update the database.
+ *
+ * For the purpose of this task, I’ve implemented two integration methods
+ * that perform this process manually.
+ */
 class HtzoneApi
 {
     /**
